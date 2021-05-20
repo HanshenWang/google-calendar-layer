@@ -22,15 +22,14 @@
     :init
     (progn
       (spacemacs/set-leader-keys
-        "agr" 'org-gcal-refresh-token
-        "ags" 'org-gcal-sync
-        "agf" 'org-gcal-fetch))
+        "aGr" 'org-gcal-refresh-token
+        "aGs" 'org-gcal-sync
+        "aGf" 'org-gcal-fetch))
     :config
-    (setq org-gcal-down-days 365)   ;; Set org-gcal to download events a year in advance
     (add-hook 'after-init-hook 'org-gcal-fetch)
     (add-hook 'kill-emacs-hook 'org-gcal-sync)
     (add-hook 'org-capture-after-finalize-hook 'google-calendar/sync-cal-after-capture)
-    (run-with-idle-timer 600 t 'google-calendar/org-gcal-update)))
+    (run-with-idle-timer 30 t 'google-calendar/org-gcal-update)))
 
 (defun google-calendar/init-calfw ()
   "Initialize calfw"
