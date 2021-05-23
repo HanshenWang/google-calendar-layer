@@ -22,7 +22,7 @@
     :init
     (progn
       (spacemacs/set-leader-keys
-        "aGr" 'org-gcal-refresh-token
+        "aGr" 'org-gcal-request-token
         "aGs" 'org-gcal-sync
         "aGf" 'org-gcal-fetch))
     :config
