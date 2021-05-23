@@ -9,17 +9,26 @@
   - [[#configure-org-gcal][Configure org-gcal]]
     - [[#create-credentials][Create credentials]]
     - [[#setup-org-gcal][Setup org-gcal]]
+      - [[#miscellaneous-org-gcal-settings][Miscellaneous org-gcal settings]]
   - [[#configure-calfw][Configure calfw]]
   - [[#schedule-events-with-org-capture][Schedule events with org-capture]]
 - [[#key-bindings][Key bindings]]
 - [[#footnotes][Footnotes]]
 
 * Description
-This layer provides two-way Google calendar synchronization using the =org-gcal= package and a dedicated calendar view using =calfw= package.
+This layer provides two-way Google calendar synchronization using the =org-gcal=
+package and a dedicated calendar view using =calfw= package.
 
-Calendar events are synchronized to your computer by =org-gcal=. They are stored in org format in one or several files user definable files. This allow the user both to include these calendar events in =org-agenda= and to create new events from any emacs buffer with =org-capture=. To learn how to setup and use the many features of =org-mode= see [[http://orgmode.org/][orgmode.org]].
+Calendar events are synchronized to your computer by =org-gcal=. They are stored
+in org format in one or several files user definable files. This allow the user
+both to include these calendar events in =org-agenda= and to create new events
+from any emacs buffer with =org-capture=. To learn how to setup and use the many
+features of =org-mode= see [[http://orgmode.org/][orgmode.org]].
 
-Your calendar events and TODOs (if you are an org user) can be viewed in either =org-agenda= or the dedicated calendar view provided by =calfw=. Calfw has daily, weekly and monthly calendar views and lets the user to easily create new events from the view itself.
+Your calendar events and TODOs (if you are an org user) can be viewed in either
+=org-agenda= or the dedicated calendar view provided by =calfw=. Calfw has
+daily, weekly and monthly calendar views and lets the user to easily create new
+events from the view itself.
 
 * Install
 To use google-calendar layer.
@@ -130,17 +139,44 @@ synchronization of multiple Google accounts.
                               ("your_second_calendar_id@gmail.com" . "/path/to/second_schedule_file.org")))
 #+END_SRC
 
-You need to include the calendar event files in =org-agenda=, do so by adding the paths to the files to the =org-agenda-files= variable.
+You need to include the calendar event files in =org-agenda=, do so by adding
+the paths to the files to the =org-agenda-files= variable.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files
         (quote ("/path/to/first_schedule_file.org" "/path/to/second_schedule_file.org")))
 #+END_SRC
 
-You can create new calendar events from any Emacs buffer with =org-capture=. This layer provides convenient accessory functions that automatically synchronize the new event to Google calendar, [[*Schedule events with org-capture][see below]].
+You can create new calendar events from any Emacs buffer with =org-capture=.
+This layer provides convenient accessory functions that automatically
+synchronize the new event to Google calendar, [[*Schedule events with org-capture][see below]].
 
+The *first time* you run a one way fetch (Gcal to org) via =SPC a G f= or a two
+way sync (Gcal & Org) via =SPC a G s= you will be prompted to login to your
+Google account to retrieve your created access token and paste the token into
+the minibuffer. The token will be persisted across subsequent commands and emacs
+sessions.
+
+**** Miscellaneous org-gcal settings
+Here are listed further possible tweaks. Remember you can run =SPC h d v= with
+the following variables for full documentation. The [[https://github.com/myuhe/org-gcal.el][org-gcal]] README contains
+more information.
+#+begin_src emacs-lisp
+  (defun dotspacemacs/user-config ()
+    ;;...
+    ;; Nests repeating weekly events
+    (setq org-gcal-recurring-events-mode 'nested)
+    ;; Turn off auto-archive
+    (setq org-gcal-auto-archive nil)
+    ;; Fetch events 90 days after, and 0 before
+    (setq org-gcal-down-days '90)
+    (setq org-gcal-up-days '0))
+#+end_src
 ** Configure calfw
-You can configure how the calfw calendar buffer should be displayed by altering the variable =calfw-calendar-window-setup=. When you close the calendar view this layer tries to restore the previous window configuration, if you would like to disable this behavior set =calfw-restore-windows-after-quit= to nil.
+You can configure how the calfw calendar buffer should be displayed by altering
+the variable =calfw-calendar-window-setup=. When you close the calendar view
+this layer tries to restore the previous window configuration, if you would like
+to disable this behavior set =calfw-restore-windows-after-quit= to nil.
 
 Calfw lets you customize the name of the months and days by altering the following arrays.
 #+BEGIN_SRC emacs-lisp
@@ -160,7 +196,10 @@ You can also change which day the week begins with the following variable.
   (setq calendar-week-start-day 1) ; 0:Sunday, 1:Monday
 #+END_SRC
 
-In Calfw calendar view you can capture TODOs or events. To do so you need to bind a [[http://orgmode.org/manual/Capture-templates.html][org-capture template]] to the variable =cfw:org-capture-template=. The following is an example template for creating a calendar event that works with the =google-calendar/sync-cal-after-capture= function.
+In Calfw calendar view you can capture TODOs or events. To do so you need to
+bind a [[http://orgmode.org/manual/Capture-templates.html][org-capture template]] to the variable =cfw:org-capture-template=. The
+following is an example template for creating a calendar event that works with
+the =google-calendar/sync-cal-after-capture= function.
 #+NAME: org-event-schedule
 #+BEGIN_SRC emacs-lisp
   (setq cfw:org-capture-template '("a" "Set Appointment" entry (file  "path/to/a/schedule/file.org" )
@@ -171,14 +210,18 @@ In Calfw calendar view you can capture TODOs or events. To do so you need to bin
   :END:
   :org-gcal:
   %^T
-  :END:"))
+  :END:")) ;; Text placed in the :org-gcal: drawer will be synced to Google Calendar
 #+END_SRC
 
 ** Schedule events with org-capture
-There are many ways to use this layer in conjunction with =org-agenda=, for instance you can capture tasks directly to the schedule org file for instance by using the template described [[org-event-schedule][above]].
+There are many ways to use this layer in conjunction with =org-agenda=, for
+instance you can capture tasks directly to the schedule org file for instance by
+using the template described [[org-event-schedule][above]].
 
 To automatically convert the new event to a google calendar event you need to
-also add the following function to the =org-capture-after-finalize-hook=. The function checks if the capture entry is put in one of the calendar org files, and if so creates an google calendar event of the file.
+also add the following function to the =org-capture-after-finalize-hook=. The
+function checks if the capture entry is put in one of the calendar org files,
+and if so creates an google calendar event of the file.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-capture-after-finalize-hook 'google-calendar/sync-cal-after-capture)
 #+END_SRC
@@ -190,12 +233,12 @@ example, see [[org-event-schedule][the capture template above]]
 
 * Key bindings
 Spacemacs leader key shortcuts.
-| Key Binding | Description                |
-|-------------+----------------------------|
-| ~SPC a G f~ | Fetch new events           |
-| ~SPC a G s~ | Sync calendar              |
-| ~SPC a G r~ | Refresh OAuth token        |
-| ~SPC a G c~ | Open calendar view         |
+| Key Binding | Description         |
+|-------------+---------------------|
+| ~SPC a G f~ | Fetch new events    |
+| ~SPC a G s~ | Sync calendar       |
+| ~SPC a G r~ | Request OAuth token |
+| ~SPC a G c~ | Open calendar view  |
 
 Changing the calendar view.
 | Key Binding | Description                 |
