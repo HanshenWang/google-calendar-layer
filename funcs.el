@@ -10,12 +10,6 @@
 ;;; License: GPLv3
 
 (when (configuration-layer/package-usedp 'org-gcal)
-  (defun google-calendar/org-gcal-update ()
-    "Refresh OAuth token, fetch and sync calendar"
-    (interactive)
-    (org-gcal-sync)
-    (org-gcal-fetch))
-
   (defun google-calendar/sync-cal-after-capture ()
     "Sync calendar after a event was added with org-capture.
 The function can be run automatically with the 'org-capture-after-finalize-hook'."

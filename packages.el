@@ -29,7 +29,7 @@
     (add-hook 'after-init-hook 'org-gcal-fetch)
     (add-hook 'kill-emacs-hook 'org-gcal-sync)
     (add-hook 'org-capture-after-finalize-hook 'google-calendar/sync-cal-after-capture)
-    (run-with-idle-timer 30 t 'google-calendar/org-gcal-update)))
+    (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))))
 
 (defun google-calendar/init-calfw ()
   "Initialize calfw"
@@ -82,6 +82,7 @@ other-frame                 Use `switch-to-buffer-other-frame' to display calend
     (spacemacs/set-leader-keys
       "aGc" 'google-calendar/calfw-view)
     (spacemacs/declare-prefix "aGc" "open-org-calendar")
+    (add-hook 'cfw:calendar-mode-hook (lambda () (org-gcal-sync)))
 
     :config
     (define-key cfw:org-schedule-map "q" 'google-calendar/calfw-restore-windows)
