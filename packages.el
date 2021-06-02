@@ -28,7 +28,6 @@
     :config
     (add-hook 'after-init-hook 'org-gcal-fetch)
     (add-hook 'kill-emacs-hook 'org-gcal-sync)
-    (add-hook 'org-capture-after-finalize-hook 'google-calendar/sync-cal-after-capture)
     (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))))
 
 (defun google-calendar/init-calfw ()

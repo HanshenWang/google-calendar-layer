@@ -9,18 +9,6 @@
 ;;
 ;;; License: GPLv3
 
-(when (configuration-layer/package-usedp 'org-gcal)
-  (defun google-calendar/sync-cal-after-capture ()
-    "Sync calendar after a event was added with org-capture.
-The function can be run automatically with the 'org-capture-after-finalize-hook'."
-    (when-let ((cal-files (mapcar 'f-expand (mapcar 'cdr org-gcal-file-alist)))
-               (capture-target (f-expand (car (cdr (org-capture-get :target)))))
-               (cal-file-exists (and (mapcar 'f-file? cal-files)))
-               (capture-target-isfile (eq (car (org-capture-get :target)) 'file))
-               (capture-target-is-cal-file (member capture-target cal-files)))
-      (org-gcal-sync)
-      (org-gcal-post-at-point))))
-
 (when (configuration-layer/package-usedp 'calfw)
   (defun google-calendar/calfw-view ()
     "Open calfw calendar view."
